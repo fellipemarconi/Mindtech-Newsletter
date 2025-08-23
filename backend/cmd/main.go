@@ -42,6 +42,7 @@ func main() {
 		ctx.JSON(200, gin.H{"message": "Welcome to the Mindtech Newsletter API"})
 	})
 	router.POST("/", subscriberController.CreateSubscriber)
+	router.DELETE("/", subscriberController.DeleteSubscriber)
 
 	router.Run()
 }
