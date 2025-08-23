@@ -28,3 +28,11 @@ func (sr *SubscriberRepository) CreateSubscriber(subscriber models.Subscriber) (
 
 	return id, nil
 }
+
+func (sr *SubscriberRepository) DeleteByEmail(email string) (int64, error) {
+	res, err := sr.connection.Exec(`DELETE FROM subscribers WHERE email = $1`, email)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
