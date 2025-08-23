@@ -10,6 +10,7 @@ import (
 var (
 	ErrInvalidEmail = errors.New("invalid email")
 	ErrEmailExists  = errors.New("email already registered")
+	ErrNotFound     = errors.New("email not found")
 )
 
 type SubscriberUseCase struct {
@@ -38,4 +39,20 @@ func (su *SubscriberUseCase) CreateSubscriber(subscriber models.Subscriber) (mod
 	subscriber.ID = id
 
 	return subscriber, nil
+}
+
+func (su *SubscriberUseCase) DeleteSubscriber(s models.Subscriber) error {
+	email := validates.NormalizeEmail(s.Email)
+	if !validates.IsValidEmail(email) {
+		return ErrInvalidEmail
+	}
+
+	affected, err := su.repository.DeleteByEmail(email)
+	if err != nil {
+		return err
+	}
+	if affected == 0 {
+		return ErrNotFound
+	}
+	return nil
 }
