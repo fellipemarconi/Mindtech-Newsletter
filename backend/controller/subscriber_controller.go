@@ -42,3 +42,25 @@ func (sc *SubscriberController) CreateSubscriber(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, insertedSubscriber)
 }
+
+func (sc *SubscriberController) DeleteSubscriber(ctx *gin.Context) {
+	var subscriber models.Subscriber
+	if err := ctx.ShouldBindJSON(&subscriber); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	if err := sc.subscribeUseCase.DeleteSubscriber(subscriber); err != nil {
+		switch {
+		case errors.Is(err, usecase.ErrInvalidEmail):
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": usecase.ErrInvalidEmail.Error()})
+		case errors.Is(err, usecase.ErrNotFound):
+			ctx.JSON(http.StatusNotFound, gin.H{"error": usecase.ErrNotFound.Error()})
+		default:
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unexpected error"})
+		}
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{"message": "unsubscribed successfully"})
+}
