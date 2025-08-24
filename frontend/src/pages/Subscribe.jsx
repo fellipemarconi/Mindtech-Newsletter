@@ -40,9 +40,20 @@ export default function Subscribe() {
     abortCtrlRef.current = new AbortController();
 
     try {
-      await subscribeEmail(email, { signal: abortCtrlRef.current.signal });
+      const { email: eResp, sig } = await subscribeEmail(email, {
+        consent: false,
+        signal: abortCtrlRef.signal,
+      });
 
-      navigate(`/success?email=${encodeURIComponent(email)}`);
+      if (eResp && sig) {
+        navigate(
+          `/success?email=${encodeURIComponent(eResp)}&sig=${encodeURIComponent(
+            sig
+          )}`
+        );
+      } else {
+        navigate(`/success?email=${encodeURIComponent(email)}`);
+      }
     } catch (err) {
       if (err.name === "AbortError") return;
 
