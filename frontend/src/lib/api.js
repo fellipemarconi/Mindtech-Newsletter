@@ -17,10 +17,10 @@ export async function subscribeEmail(email, { consent = false, signal } = {}) {
         try {
           data = JSON.parse(raw);
         } catch {
-          /* ignora JSON malformado */
+          /* noop */
         }
       } else {
-        data = { raw };
+        data = { message: raw };
       }
     }
   }
@@ -37,5 +37,5 @@ export async function subscribeEmail(email, { consent = false, signal } = {}) {
     throw err;
   }
 
-  return data;
+  return { email: data?.email, sig: data?.sig };
 }
