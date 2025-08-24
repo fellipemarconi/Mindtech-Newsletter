@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout.jsx";
 import Card from "../components/Card.jsx";
@@ -7,32 +7,61 @@ import Bullet from "../components/Bullet.jsx";
 import InputEmail from "../components/InputEmail.jsx";
 import ButtonPrimary from "../components/ButtonPrimary.jsx";
 import Brand from "../components/Brand.jsx";
+import { subscribeEmail } from "../lib/api.js";
 
 export default function Subscribe() {
   const [email, setEmail] = useState("");
   const [serverMsg, setServerMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const abortCtrlRef = useRef(null);
 
-  function handleSubmit(e) {
+  useEffect(() => {
+    return () => {
+      if (abortCtrlRef.current) abortCtrlRef.current.abort();
+    };
+  }, []);
+
+  const canSubmit = useMemo(() => {
+    return /\S+@\S+\.\S+/.test(email);
+  }, [email]);
+
+  async function handleSubmit(e) {
     e.preventDefault();
     setServerMsg("");
-    if (!email) {
+
+    if (!canSubmit) {
       setServerMsg("Informe um e-mail válido.");
       return;
     }
-    // (por enquanto sem backend) → navega direto
+
     setLoading(true);
-    setTimeout(() => {
+
+    abortCtrlRef.current = new AbortController();
+
+    try {
+      await subscribeEmail(email, { signal: abortCtrlRef.current.signal });
+
       navigate(`/success?email=${encodeURIComponent(email)}`);
-    }, 250);
+    } catch (err) {
+      if (err.name === "AbortError") return;
+
+      if (err.status === 409) {
+        setServerMsg("Este e-mail já está inscrito.");
+      } else {
+        setServerMsg(
+          err.message || "Não foi possível concluir sua inscrição agora."
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <Layout>
       <Card>
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
-          {/* Coluna esquerda: textos + form */}
           <div>
             <H1 className="mb-4">Inscreva-se agora!</H1>
             <P className="mb-6">
@@ -56,18 +85,17 @@ export default function Subscribe() {
 
             <form onSubmit={handleSubmit} noValidate className="space-y-4">
               <InputEmail value={email} onChange={setEmail} />
+              <p className="sr-only" aria-live="polite">
+                {serverMsg}
+              </p>
               {serverMsg && (
-                <p
-                  className="text-sm text-red-400"
-                  role="alert"
-                  aria-live="polite"
-                >
+                <p className="text-sm text-red-400" role="alert">
                   {serverMsg}
                 </p>
               )}
               <ButtonPrimary
                 type="submit"
-                disabled={loading}
+                disabled={loading || !canSubmit}
                 className="w-full md:w-auto"
               >
                 {loading ? "Enviando..." : "Inscrever-se"}
@@ -75,10 +103,9 @@ export default function Subscribe() {
             </form>
           </div>
 
-          {/* Coluna direita: imagem */}
           <div className="flex items-center justify-center">
             <img
-              src="/Imagem.png"
+              src="/assets/Imagem.png"
               alt="Ilustração IoT"
               className="w-full max-w-md rounded-3.5xl"
               loading="eager"

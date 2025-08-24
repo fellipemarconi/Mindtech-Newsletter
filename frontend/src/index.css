@@ -6,7 +6,6 @@
   --bg-page: #092456;
 }
 
-/* melhora foco visível */
 :focus {
   outline: 2px solid #165cde;
   outline-offset: 2px;
