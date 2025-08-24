@@ -4,10 +4,12 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Subscribe from "./pages/Subscribe.jsx";
 import Success from "./pages/Success.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <Subscribe /> },
   { path: "/success", element: <Success /> },
+  { path: "*", element: <NotFound /> },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
