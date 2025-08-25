@@ -43,10 +43,10 @@ git clone https://github.com/fellipemarconi/Mindtech-Newsletter.git
 Na raiz do projeto mude o nome do arquivo .env-example para .env
 
 ```bash
-#Windows
+# Windows
 ren .env-example .env
 
-#Linux / Mac
+# Linux/Mac
 mv .env-example .env
 ```
 
@@ -67,7 +67,7 @@ SECRET_KEY="CHANGE_ME"  (Uma string grande como codificador para o sign)
 
 ### 3. Rodando com Docker 🐳
 
-Na raiz do projeto abra o terminal e rode os comandos abaixo:
+Na raiz do projeto e com o Docker aberto abra o terminal e rode os comandos abaixo:
 
 ```bash
 docker-compose up --build
