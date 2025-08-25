@@ -40,10 +40,14 @@ git clone https://github.com/fellipemarconi/Mindtech-Newsletter.git
 
 ### 2. Configure as variáveis de ambiente
 
-Mude o nome do arquivo .env-example para .env
+Na raiz do projeto mude o nome do arquivo .env-example para .env
 
 ```bash
-cp .env-example .env
+#Windows
+ren .env-example .env
+
+#Linux / Mac
+mv .env-example .env
 ```
 
 Edite os valores conforme necessário (`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, etc).
@@ -62,6 +66,8 @@ SECRET_KEY="CHANGE_ME"  (Uma string grande como codificador para o sign)
 ---
 
 ### 3. Rodando com Docker 🐳
+
+Na raiz do projeto abra o terminal e rode os comandos abaixo:
 
 ```bash
 docker-compose up --build
