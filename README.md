@@ -25,7 +25,7 @@ Permite cadastrar e remover emails de forma simples, utilizando **Go + PostgreSQ
 
 Antes de rodar a aplicação, certifique-se de ter instalado:
 
-- [Docker](https://www.docker.com/)
+- [Docker & Docker-Compose](https://www.docker.com/)
 - [Make](https://gnuwin32.sourceforge.net/packages/make.htm) (opcional, recomendado para Windows para facilitar os comandos)
 
 ---
